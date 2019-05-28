@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<type name="PortletODS" superclass="generated.AbstractPortletSkinable" debatable="false" unitFieldEdition="true" audienced="false" categoryTab="true" readRightTab="true" updateRightTab="true" templateTab="true" workflowTab="true" advancedTab="true">
+  <label xml:lang="fr">Portlet ODS</label>
+  <title ml="true">
+    <label xml:lang="en">Title</label>
+    <label xml:lang="fr">Titre</label>
+  </title>
+  <fields>
+    <field type="super" />
+    <field name="widgetCode" editor="textarea" required="false" compactDisplay="false" type="String" searchable="false" rows="30" cols="120" ml="true" wiki="false" html="true" checkHtml="false" descriptionType="tooltip">
+      <label xml:lang="fr">Code Widget</label>
+    </field>
+  </fields>
+</type>
+

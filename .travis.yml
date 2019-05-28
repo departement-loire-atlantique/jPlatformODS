@@ -1,0 +1,26 @@
+env:
+  global:
+  - secure: monA1KxeXAB42e6nO6YsNY+X2YW7i8ZWrkgTalLDaLzG8g+01lA1fneBRJYaBLMW/q7KMrDI9H0YV95tSrRQk60SBwuYioIJFEGC3/pqmLwDAFgwTlV2fkNn7rSeSijUO3LMqhRC+VJObcQVJ7J7nXkPxA/LXublJaTkHiPnPaV4ufuvqyDd5ByRsCjj110mhX6lMo4kGPqMC18H/NPyChLPDHZstVjwTv1lOW8hr+C8WJTIQG2NchkbQShWFTkf9TmnEfQkwtI267cmP8Z487+hccDN/ek87eLelGkpME7k57ALb6uOS2eV3luPHFxVlCUMCL4EFhMEIalJ0aNQq81d3Su2Aa0t0kUfgbR+XTT1YU0rIewhB3UUm1eXqCB8CEiFpSv8ez/nTOqIdmKfY8aUOn2lAwWWAgvV4QcX1W96+DhIvNYdseMUucDq1FNmjOyN2QrPmqvxVD8teM2Z6fv9jiP9N0TrVB4OYxQg1g5A0UESE61S/bvUG6B8fNoG8gLCAttYBGlbQWhk/aPLd4Y/dyx7Ep3zzrqdbJGC8Q6cK/rkdEDZ5B+b7hZMSJdl8Jo/knT6ARYb50qBICjHNWzGpiNtDKi/gozEt+8cZbWMw3asxRmL0G3ZWM1q8v2AhXIyIaT0YbT+lsygiGHIrmRH6uqYjJppUgK5oVy0rPw=
+  - secure: qK0PPYk9q4HgSEjMYUu6kGQjGY5Tuxu0zUVSUVtBlL7SbSWk8/sVdFWlVd9lkWYJE9ezQJICPMuqGSCvL9/9rIuKBdIP6UTPpsdYRdWjzP9+ZjxOIw22mx9zfUyOeJjmlxOWSws83iMjZgunY1bVU1ugmwXtY6+SotlnND6O6vJV8xNmeGW0i/DKHy9KSLFk57Vk2ITyfnV5a0Dvflfevs6ib1WenozFPdLN9y7Df9qdA42DiXHNEIZH+3lUP2nvLeqMYhN+3Ss4S2R8iX1qbvRds8ubCaAtXWh+JI9eKDfoArt8tmTrFdBN4BXEhebhpXyAQ6LgFMLpNMRgkIBqhWwI3RZTgNDhFGUA4LMJunPMue3XKuH/lWwj94F62IeC5rhmudDpaJJhlwKZ//YN6fqLJvuyNQka1+NzkRcvc6xe+I/DbWhbFf4prOXMKnwusLuq7X84N9uhgERAF7LjdfUgBfTdpSZeof5re0PnzZ8h248X9Edyt+t65CCK92IS8/WhDRot3s8dz3r07gjTHyzF56ODGs3CwHKy3T1Y22po1Cv1rEK9Qc/d47RVX+08nQkJV+wz7MYPCR4wSjhWWTvSqu8umI8NkDJC+lKADO9SNpfBGAo6gU2dugNqFzCd0kICYU4erdcxjqcG0H4mnTvEPt/RxEB6u217LLbmcp0=
+
+services:
+- docker
+
+before_script:
+- echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+- docker pull julienbayle/jplatformbuild
+
+script:
+- docker run -v ${TRAVIS_BUILD_DIR}:/root/source --name buildimage -t julienbayle/jplatformbuild
+- docker cp buildimage:/root/dist .
+- export CODE_VERSION=`git describe`
+
+deploy:
+  provider: releases
+  api_key:
+    secure: PuZbEGVQjTGSkYtyg/Xe3DDA0NV9l5r+0kioPCo5tCjKCPHo0Hn0W+E34lCDiR4VG79E4lCI311f8sbTOsKe3Zh3QXtKDyIdjV8+jr5Fe7461J6a6hV73RJOiizeYuPNfENjlROjF4R+/+mtHsGW3bJD1IpmmEvyFDn9EcKPgAgJqGrJugXmu9ciUt62rD/2z+2nKaRNYjhyobPeJAy53q2rcA2jt6V+0WSHnX+wwFn1B143SFFpUDYEMsYpIEyO0LwfHBElfK/MzQHdGAY+OnUX1ttU20+Quv2pfCHKxe6ZKx//4o34wVyX+a3ZiZelrTm2vVoCLufrIfNYDMrxYj8aBJaDh/flaRQuQmR2kxRbGEFhVXs6ee3Ofqk5evHhRxRt20dhF8M4+WvqAeMk6vNeTX5EE8mB2e7X4AqOqQNf7ylOKT6/qccYxrpKN0oFauN8GOeExoZgU4CD8VtTxBmDBmgFeQikp3O6g+TrcBdrYtCSgYKakuyoyh0t8va4lL+pcj5aWdXmlMpqCz1LwGsbTRvyqT4IgNe/Re3T6i5lQMoD7POqJT7NvsnbfHpcpkuGOasrD5q+S/Y1sT4SCJqWowzb1BPvpp3y/DSE9HdWNzXp8J/ZDwEQHLCl+dZ7RfL1QIK1//zJR3Vc9qalTU9GI1k3ZDqM7hJnhqkyFlo=
+  file_glob: true
+  file: "${TRAVIS_BUILD_DIR}/dist/*.zip"
+  skip_cleanup: true
+  on:
+    tags: true
